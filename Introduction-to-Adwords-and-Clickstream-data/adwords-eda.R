@@ -296,7 +296,7 @@ fig = plot_ly(data = sample_active_adwords,
         color=I('purple')) %>%
   layout(
     xaxis = list(title = "", tickfont=list(size=20)),
-    yaxis = list(title = "Count (log)", titlefont=list(size=30), tickfont=list(size=20),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20),
                  type = "log"))
 
 orca(fig, file = "images/impressions_dist.pdf")
@@ -408,7 +408,7 @@ fig = plot_ly(data = sample_active_adwords,
         color=I('dark grey')) %>%
   layout(
     xaxis = list(title = "", tickfont=list(size=20)),
-    yaxis = list(title = "Count (log)", titlefont=list(size=30), tickfont=list(size=20),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20),
                  type = 'log'))
 
 orca(fig, file = "images/maxcpc_dist.pdf")
