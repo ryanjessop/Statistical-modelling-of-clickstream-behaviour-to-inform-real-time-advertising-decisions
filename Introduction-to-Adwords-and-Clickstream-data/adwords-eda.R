@@ -673,7 +673,10 @@ numerical <- c('ImpressionsDelta', 'ClicksDelta',
                'MaxCpc')
 
 # Pairs plot
-pairs(impr_data[numerical], upper.panel = NULL)
+pairs(impr_data[numerical],
+      upper.panel = NULL, 
+      cex.axis=2,
+      cex.labels = 2.75)
 
 # Correlation plot
 cor_matrix <- cor(impr_data[numerical])

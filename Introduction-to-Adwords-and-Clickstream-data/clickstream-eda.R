@@ -327,7 +327,7 @@ quantile(spyro_page_visits$est_pv_duration,
 spyro_page_visits_in_session = spyro_page_visits %>% 
   group_by(new_sid) %>%  
   summarise(count = n()) %>%
-  filter(count < 100) %>%
+  filter(count < 30) %>%
   filter(count > 1)
 
 quantile(spyro_page_visits_in_session$count, 
@@ -623,19 +623,19 @@ plot_ly(spyro_page_visits_in_session,
 
 descdist(spyro_page_visits_in_session$count, discrete = FALSE)
 
-fw <- fitdist(spyro_page_visits_in_session$count - 1, 
+fw <- fitdist(spyro_page_visits_in_session$count, 
          distr = "weibull", method = 'mle')
 summary(fw)
 
 alpha = 1.02828944
 lambda = 8.58016948
-a <- seq(0.1, 100, 0.1)
+a <- seq(2, 30, 0.1)
 
 w_dist <- (alpha/lambda)*((a/lambda)^(alpha - 1))*exp(-((a/lambda)^(alpha)))
 summary(w_dist)
-w_dist = dweibull(a, shape=0.8833657, scale =6.9225031, log = FALSE)
-g_dist = dgamma(a, shape = 1.2539404, rate = 0.1482407)
-e_dist = dexp(a, rate = 0.1182497)
+w_dist = dweibull(a, shape=1.297766, scale =7.168908, log = FALSE)
+g_dist = dgamma(a, shape = 1.814303, rate = 0.276725)
+e_dist = dexp(a, rate = 0.152498)
 p_dist = dpois(a, lambda = 7.456682)
 b_dist = dnbinom(a, size = 1.372226, mu = 8.457522)
 
@@ -644,9 +644,19 @@ fig = plot_ly(spyro_page_visits_in_session) %>%
             type = "histogram", 
             histnorm = "probability",
             color=I('black')) %>%
-  add_trace(x =~(a+1), 
+  add_trace(x =~a, 
             y =~w_dist,
             color=I('red'),
+            mode='lines',
+            line = list(width = 4)) %>%
+  add_trace(x =~a, 
+            y =~g_dist,
+            color=I('blue'),
+            mode='lines',
+            line = list(width = 4)) %>%
+  add_trace(x =~a, 
+            y =~e_dist,
+            color=I('green'),
             mode='lines',
             line = list(width = 4)) %>%
   layout(

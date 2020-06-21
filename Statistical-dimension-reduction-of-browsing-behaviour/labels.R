@@ -58,7 +58,7 @@ plot_ly(
   type = "bar"
 )
 
-plot_ly(
+fig = plot_ly(
   data=rfmp_sample, 
   x = ~day_count, 
   y = ~recent_date,
@@ -67,11 +67,13 @@ plot_ly(
   color = ~factor(Old_rfmp_Active),
   colors = c("blue", "orange")) %>% 
   layout(
-    xaxis = list(title = "DayCount"),
-    yaxis = list(title = "RecentDate"),
+    xaxis = list(title = "DayCount", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "RecentDate", titlefont=list(size=30), tickfont=list(size=20)),
     showlegend = FALSE)
 
-plot_ly(
+orca(fig, file = "images/old_active_rec_freq_scatter.png")
+
+fig = plot_ly(
   data=rfmp_sample, 
   x = ~day_count, 
   y = ~recent_date,
@@ -80,9 +82,12 @@ plot_ly(
   color = ~factor(Old_rfmp_HyperIntent),
   colors = c("blue", "red")) %>% 
   layout(
-    xaxis = list(title = "DayCount"),
-    yaxis = list(title = "RecentDate"),
+    xaxis = list(title = "DayCount", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "RecentDate", titlefont=list(size=30), tickfont=list(size=20)),
     showlegend = FALSE)
+
+orca(fig, file = "images/old_hyperintent_rec_freq_scatter.png")
+
 
 plot_ly(
   data=rfmp_sample, 
@@ -123,7 +128,7 @@ plot_ly(
     yaxis = list(title = "MaximumInterVisit"),
     showlegend = FALSE)
 
-plot_ly(
+fig = plot_ly(
   data=rfmp_sample, 
   x = ~avg_inter_visit, 
   y = ~max_inter_visit,
@@ -132,10 +137,11 @@ plot_ly(
   color = ~factor(Old_rfmp_Regular),
   colors = c("blue", "green")) %>% 
   layout(
-    xaxis = list(title = "AverageInterVisit"),
-    yaxis = list(title = "MaximumInterVisit"),
+    xaxis = list(title = "AverageInterVisit", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "MaximumInterVisit", titlefont=list(size=30), tickfont=list(size=20)),
     showlegend = FALSE)
 
+orca(fig, file = "images/old_regular_var_scatter.png")
 
 # Coloured pairs plots
 rec_vars <- rfmp_sample[c('recent_date_day', 'median_date_day', 'avg_date_day', 'min_date_day',
@@ -267,8 +273,9 @@ Label_new_rfmp_HyperIntent <- function(data) {
   new_label <- numeric(length=nrow(data))
   label_index <- which(data$day_count_disc != 'Low' & 
                        (data$recent_date_day_disc == 'Very High' |
-                       data$recent_date_day_disc == 'High') &
-                       data$avg_hits_disc != 'Low')
+                       data$recent_date_day_disc == 'High') 
+                      & data$avg_hits_disc != 'Low'
+                       )
   print(length(label_index))
   new_label[label_index] = 1
   return(new_label)
@@ -294,7 +301,7 @@ length(which(rfmp_sample$new_rfmp_Active == 0 &
 
 
 
-plot_ly(
+fig = plot_ly(
   data=rfmp_sample, 
   x = ~day_count, 
   y = ~recent_date,
@@ -303,11 +310,13 @@ plot_ly(
   color = ~factor(new_rfmp_Active),
   colors = c("blue", "orange")) %>% 
   layout(
-    xaxis = list(title = "DayCount"),
-    yaxis = list(title = "RecentDate"),
+    xaxis = list(title = "DayCount", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "RecentDate", titlefont=list(size=30), tickfont=list(size=20)),
     showlegend = FALSE)
 
-plot_ly(
+orca(fig, file = "images/new_active_rec_freq_scatter.png")
+
+fig = plot_ly(
   data=rfmp_sample, 
   x = ~day_count, 
   y = ~recent_date,
@@ -316,9 +325,11 @@ plot_ly(
   color = ~factor(new_rfmp_HyperIntent),
   colors = c("blue", "red")) %>% 
   layout(
-    xaxis = list(title = "DayCount"),
-    yaxis = list(title = "RecentDate"),
+    xaxis = list(title = "DayCount", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "RecentDate", titlefont=list(size=30), tickfont=list(size=20)),
     showlegend = FALSE)
+
+orca(fig, file = "images/new_hyperintent_rec_freq_scatter.png")
 
 plot_ly(
   data=rfmp_sample, 
@@ -359,7 +370,7 @@ plot_ly(
     yaxis = list(title = "MaximumInterVisit"),
     showlegend = FALSE)
 
-plot_ly(
+fig = plot_ly(
   data=rfmp_sample, 
   x = ~avg_inter_visit, 
   y = ~max_inter_visit,
@@ -368,8 +379,11 @@ plot_ly(
   color = ~factor(new_rfmp_Regular),
   colors = c("blue", "green")) %>% 
   layout(
-    xaxis = list(title = "AverageInterVisit"),
-    yaxis = list(title = "MaximumInterVisit"),
+    xaxis = list(title = "AverageInterVisit", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "MaximumInterVisit", titlefont=list(size=30), tickfont=list(size=20)),
     showlegend = FALSE)
+
+orca(fig, file = "images/new_regular_var_scatter.png")
+
 
 #----------------------------------------------------------------------
