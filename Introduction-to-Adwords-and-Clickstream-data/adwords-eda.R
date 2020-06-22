@@ -28,7 +28,7 @@ library(webshot)
 
 # Data from keyword reports 
 # Date range: 01/08/2017-01/10/2017
-adword_data <- read_csv("adword_data.csv")
+adword_data <- read_csv("~/data/masters/Ch-2/adword_data.csv")
 View(adword_data)
 nrow(adword_data)
 
