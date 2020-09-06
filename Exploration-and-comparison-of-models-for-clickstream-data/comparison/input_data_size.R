@@ -91,13 +91,17 @@ boxplot(score~size,
         data=data_likelihoods_df,
         main="",
         xlab="Sample size %", 
-        ylab="Log-likelihood of sequence")
+        ylab="Log-likelihood of sequence",
+        cex.axis=2,
+        cex.lab=2.5)
 
 boxplot(score~size,
         data=data_timings_df,
         main="",
         xlab="Sample size %", 
-        ylab="Computation time (s)")
+        ylab="Computation time (s)",
+        cex.axis=2.5,
+        cex.lab=2.5)
 
 # Outputs:
 # Likelihood 
