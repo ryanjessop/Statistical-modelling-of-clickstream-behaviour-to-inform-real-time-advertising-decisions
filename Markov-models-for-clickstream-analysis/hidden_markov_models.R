@@ -63,14 +63,34 @@ plot_hmm_logs <- function(hmm){
           y = hmm$hmm$States,
           z = log10(hmm$hmm$emissionProbs) %>% rationalize(), 
           colors = palette(100),
+          colorbar=list(title='Emission \n Probability \n (log)', titlefont=list(size=20), tickfont=list(size=20)),
           type = "heatmap",
           zauto = FALSE, zmin = min(log10(hmm$hmm$emissionProbs) %>% rationalize(), zmax = 0, na.rm = TRUE)) %>%
-    layout(xaxis = list(title='Observed States'),
-           yaxis = list(title='Hidden States'),
-           title = "5 hidden state Markov model",
-           annotations=legendtitle)
+    layout(xaxis = list(title='Observed States', titlefont=list(size=30), tickfont=list(size=20)),
+           yaxis = list(title='Hidden States', titlefont=list(size=30), tickfont=list(size=20)))
 }
 
+plot_matrix_logs_v2 <- function(hmm){
+  
+  plot_ly(x = hmm$hmm$Symbols, 
+          y = hmm$hmm$States,
+          z = log10(hmm$hmm$transProbs) %>% rationalize(),  
+          colors = palette(100),
+          colorbar=list(title='Transition \n Probability \n (log)', 
+                        titlefont=list(size=20), 
+                        tickfont=list(size=20)),
+          type = "heatmap",
+          zauto = FALSE, 
+          zmin = min(log10(hmm$hmm$transProbs) %>% rationalize(), 
+                     zmax = 0, 
+                     na.rm = TRUE)) %>%
+    layout(xaxis = list(title='Hidden States', 
+                        titlefont=list(size=30), 
+                        tickfont=list(size=20)),
+           yaxis = list(title='Hidden States', 
+                        titlefont=list(size=30), 
+                        tickfont=list(size=20)))
+}
 
 # Hidden Markov Model run
 
@@ -84,6 +104,7 @@ gold_hmm_3 = train_hmm(
   start_sample_size=0.1,
   end_sample_size=0.8)
 plot_hmm(gold_hmm_3)
+fig = plot_hmm_logs(gold_hmm_3)
 
 gold_hmm_4 = train_hmm(
   num_hidden_states=4, 
@@ -92,6 +113,8 @@ gold_hmm_4 = train_hmm(
   start_sample_size=0.1,
   end_sample_size=0.9)
 plot_hmm(gold_hmm_4)
+fig = plot_hmm_logs(gold_hmm_4)
+fig = plot_matrix_logs_v2(gold_hmm_4)
 
 gold_hmm_5 = train_hmm(
   num_hidden_states=5, 
@@ -100,6 +123,8 @@ gold_hmm_5 = train_hmm(
   start_sample_size=0.1,
   end_sample_size=0.55)
 plot_hmm(gold_hmm_5)
+fig = plot_hmm_logs(gold_hmm_5)
+fig = plot_matrix_logs_v2(gold_hmm_5)
 
 recursive_gold_hmm_5 = train_hmm(
   num_hidden_states=5, 
@@ -110,7 +135,8 @@ recursive_gold_hmm_5 = train_hmm(
   start_sample_size=0.7,
   end_sample_size=0.9)
 plot_hmm(recursive_gold_hmm_5)
-plot_hmm_logs(recursive_gold_hmm_5)
+fig = plot_hmm_logs(recursive_gold_hmm_5)
+fig = plot_matrix_logs_v2(recursive_gold_hmm_5)
 
 full_gold_hmm_5 = train_hmm(
   num_hidden_states=5, 
@@ -127,6 +153,10 @@ gold_hmm_6 = train_hmm(
   start_sample_size=0.2,
   end_sample_size=0.8)
 plot_hmm(gold_hmm_6)
+fig = plot_hmm_logs(gold_hmm_6)
+fig = plot_matrix_logs_v2(gold_hmm_6)
 
 
 (table(viterbi(recursive_gold_hmm_5$hmm, clickstreams)) / length(clickstreams)) * 100
+
+orca(fig, file = "images/init_emission_matrix.pdf")

@@ -34,7 +34,7 @@ library(fitdistrplus)
 # Read in data created in Spark
 
 # Data from tag collection - One source of data for entire page
-page_visits <- read_csv("C:/Users/ryana/Desktop/Ch_2/data/2019-01-31/page-visits.csv")
+page_visits <- read_csv("page-visits.csv")
 View(page_visits)
 nrow(page_visits)
 str(page_visits)
@@ -42,35 +42,35 @@ head(page_visits)
 
 # Data from data science features - Create from page visits using aggregation dplyr
 # Date range: 
-profiles <- read_csv("C:/Users/ryana/Desktop/Ch_2/data/2019-01-31/profiles.csv")
+profiles <- read_csv("profiles.csv")
 View(profiles)
 nrow(profiles)
 str(profiles)
 head(profiles)
 
 # Read in demographics for profiles
-demos <- read_csv("C:/Users/ryana/Desktop/Ch_2/data/2019-01-31/demos.csv")
+demos <- read_csv("demos.csv")
 View(demos)
 nrow(demos)
 str(demos)
 head(demos)
 
 # Read in session level data from spyro
-spyro_page_visits <- read_csv("C:/Users/ryana/Desktop/Ch_2/data/2019-01-31/spyro-page-visits.csv")
+spyro_page_visits <- read_csv("spyro-page-visits.csv")
 View(spyro_page_visits)
 nrow(spyro_page_visits)
 str(spyro_page_visits)
 head(spyro_page_visits)
 
 # Read in inter session data from spyro
-spyro_inter_visits <- read_csv("C:/Users/ryana/Desktop/Ch_2/data/2019-01-31/spyro-inter-visits.csv")
+spyro_inter_visits <- read_csv("spyro-inter-visits.csv")
 View(spyro_inter_visits)
 nrow(spyro_inter_visits)
 str(spyro_inter_visits)
 head(spyro_inter_visits)
 
 # Read in inter session data from spyro
-spyro_inter_visits_v2 <- read_csv("C:/Users/ryana/Desktop/Ch_2/data/2019-01-31/spyro-inter-visits-v2.csv")
+spyro_inter_visits_v2 <- read_csv("spyro-inter-visits-v2.csv")
 View(spyro_inter_visits_v2)
 nrow(spyro_inter_visits_v2)
 str(spyro_inter_visits_v2)
@@ -113,55 +113,62 @@ table(profiles$bot)
 nrow(profiles)
 
 # PageVisitStartTime distribution
-plot_ly(data = page_visits, 
+fig = plot_ly(data = page_visits, 
         x = ~pv_start, 
         type = "histogram") %>%
   layout(
-    xaxis = list(title = "PageVisitStartTime"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/PageVisitStartTime_dist.pdf")
 
 # PageVisitEndtimeType distribution
 table(page_visits$pv_endtime_type)
-plot_ly(data = page_visits, 
+fig = plot_ly(data = page_visits, 
         x = ~pv_endtime_type, 
         type = "histogram",
         color=I('green')) %>%
   layout(
-    xaxis = list(title = "PageVisitEndtimeType"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/PageVisitEndtimeType_dist.pdf")
 
 # Categories
 table(page_visits$pv_interest)
-plot_ly(data = page_visits, 
+fig = plot_ly(data = page_visits, 
         x = ~pv_interest, 
         type = "histogram",
         color=I('purple')) %>%
   layout(
-    xaxis = list(title = "PageVisitCategoryID"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
 
 table(page_visits$taxonomy_tier1)
-plot_ly(data = page_visits, 
+fig = plot_ly(data = page_visits, 
         x = ~taxonomy_tier1, 
         type = "histogram",
         color=I('purple')) %>%
   layout(
-    xaxis = list(title = "PageVisitCategoryID"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
 
 page_visits_category = page_visits %>% 
   group_by(pv_interest) %>% 
   summarise(count = n()) %>% 
   filter(count > 20000)
 
-plot_ly(data = page_visits_category, 
+fig = plot_ly(data = page_visits_category, 
         x = ~pv_interest,
         y = ~count,
         type = "bar",
         color=I('purple')) %>%
   layout(
-    xaxis = list(title = "PageVisitCategoryID"),
-    yaxis = list(title = "Count"))
+    margin = list(b = 200),
+    xaxis = list(title = "", tickfont=list(size=15), tickangle=45),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/PageVisitCategoryID_dist.pdf")
 
 # Referrer type - No referrer signal
 table(page_visits$referrer)
@@ -171,14 +178,17 @@ page_visits_referrer = page_visits %>%
   summarise(count = n()) %>% 
   filter(count > 2000)
 
-plot_ly(page_visits_referrer, 
+fig = plot_ly(page_visits_referrer, 
         x = ~referrer,
         y = ~count,
         type = "bar",
         color=I('dark red')) %>%
   layout(
-    xaxis = list(title = "Referrer"),
-    yaxis = list(title = "Count"))
+    margin = list(b = 200),
+    xaxis = list(title = "", tickfont=list(size=15), tickangle=45),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/Referrer_dist.pdf")
 
 View(page_visits_referrer)
 
@@ -196,24 +206,29 @@ profiles_country = profiles %>%
   filter(country != 'None')
 
 table(profiles_country$country)
-plot_ly(profiles_country, 
+fig = plot_ly(profiles_country, 
         x = ~country,
         y = ~count,
         type = "bar",
         color=I('black')) %>%
   layout(
-    xaxis = list(title = "Country"),
-    yaxis = list(title = "Count"))
+    margin = list(b = 150),
+    xaxis = list(title = "", tickfont=list(size=20), tickangle=45),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/Country_dist.pdf")
 
 # DeviceType
-plot_ly(profiles, 
+fig = plot_ly(profiles, 
         x = ~dev_type, 
         type = "histogram",
         color=I('grey')) %>%
   layout(
-    xaxis = list(title = "DeviceType"),
-    yaxis = list(title = "Count", 
-    type = 'log'))
+    margin = list(b = 100),
+    xaxis = list(title = "", tickfont=list(size=20), tickangle=45),
+    yaxis = list(title = "Count", type = 'log', titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/DeviceType_dist.pdf")
 
 # DeviceHardware
 profiles_hardware = profiles %>% 
@@ -222,14 +237,17 @@ profiles_hardware = profiles %>%
   filter(count > 1000) %>%
   filter(dev_hardware != 'Unknown')
 
-plot_ly(profiles_hardware, 
+fig = plot_ly(profiles_hardware, 
         x = ~dev_hardware,
         y = ~count,
         type = "bar",
         color=I('red')) %>%
   layout(
-    xaxis = list(title = "DeviceHardware"),
-    yaxis = list(title = "Count", type = 'log'))
+    margin = list(b = 100),
+    xaxis = list(title = "", tickfont=list(size=20), tickangle=45),
+    yaxis = list(title = "Count", type = 'log', titlefont=list(size=30), tickfont=list(size=15)))
+
+orca(fig, file = "images/DeviceHardware_dist.pdf")
 
 # DeviceOS
 profiles_os = profiles %>% 
@@ -270,14 +288,17 @@ demos_name = demos %>%
   summarise(count = n()) %>% 
   filter(count > 15000)
 
-plot_ly(demos_name, 
+fig = plot_ly(demos_name, 
         x = ~demographic_name,
         y = ~count,
         type = "bar",
         color=I('dark green')) %>%
   layout(
-    xaxis = list(title = "ProfileDemographics"),
-    yaxis = list(title = "Count"))
+    margin = list(b = 150),
+    xaxis = list(title = "", tickfont=list(size=20), tickangle=45),
+    yaxis = list(title = "Count", type = 'log', titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/ProfileDemographics_dist.pdf")
 
 #-----------------------------------------------------------
 # Page visits aggregated to session variables
@@ -289,13 +310,15 @@ quantile_probs = c(seq(0, 1, 0.25))
 head(spyro_page_visits)
 
 # PageVisitDuration
-plot_ly(spyro_page_visits, 
+fig = plot_ly(spyro_page_visits, 
         x = ~est_pv_duration,
         type = "histogram",
         color=I('dark green')) %>%
   layout(
-    xaxis = list(title = "PageVisitDuration"),
-    yaxis = list(title = "Count", type='log'))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", type='log', titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/PageVisitDuration_dist.png")
 
 quantile(spyro_page_visits$est_pv_duration, 
          probs = quantile_probs)
@@ -304,20 +327,21 @@ quantile(spyro_page_visits$est_pv_duration,
 spyro_page_visits_in_session = spyro_page_visits %>% 
   group_by(new_sid) %>%  
   summarise(count = n()) %>%
-  filter(count < 100) %>%
+  filter(count < 30) %>%
   filter(count > 1)
 
 quantile(spyro_page_visits_in_session$count, 
          probs = quantile_probs)
 
-plot_ly(spyro_page_visits_in_session, 
+fig = plot_ly(spyro_page_visits_in_session, 
         x = ~count,
         type = "histogram",
         color=I('orange')) %>%
   layout(
-    xaxis = list(title = "PageVisitsInSession"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
 
+orca(fig, file = "images/PageVisitsInSession_dist.pdf")
 
 # SessionDuration
 spyro_session_length = spyro_page_visits %>% 
@@ -331,13 +355,15 @@ max(spyro_session_length$session_duration)
 quantile(spyro_session_length$session_duration, 
          probs = quantile_probs)
 
-plot_ly(data = spyro_session_length, 
+fig = plot_ly(data = spyro_session_length, 
         x = ~session_duration,
         type = "histogram",
         color=I('light blue')) %>%
   layout(
-    xaxis = list(title = "SessionDuration"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/SessionDuration_dist.pdf")
 
 plot_ly(data = spyro_session_length, 
         x = ~session_duration/60,
@@ -360,13 +386,15 @@ spyro_av_pv = spyro_page_visits %>%
 quantile(spyro_av_pv$av_pv_length, 
          probs = quantile_probs)
 
-plot_ly(data = spyro_av_pv, 
+fig = plot_ly(data = spyro_av_pv, 
         x = ~av_pv_length,
         type = "histogram",
         color=I('dark red')) %>%
   layout(
-    xaxis = list(title = "AveragePageVisitDuration"),
-    yaxis = list(title = "Count")) 
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/AveragePageVisitDuration_dist.pdf")
 
 # Since last session 
 # Overlapping sessions set to zero
@@ -375,13 +403,15 @@ head(spyro_inter_visits)
 quantile(spyro_inter_visits$inter_session_duration, 
          probs = quantile_probs, na.rm=TRUE)
 
-plot_ly(data = spyro_inter_visits, 
+fig = plot_ly(data = spyro_inter_visits, 
         x = ~inter_session_duration, 
         type = "histogram",
         color=I('black')) %>%
   layout(
-    xaxis = list(title = "InterSessionDuration"),
-    yaxis = list(title = "Count", type='log'))  
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", type='log', titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/InterVisitDuration_dist.png")
 
 # Bounce rate
 spyro_under_bounce = spyro_page_visits %>% 
@@ -411,15 +441,17 @@ spyro_session_data = spyro_page_visits %>%
   mutate(av_pv_length = session_duration/num_pv)
 
 spyro_session_numerical <- spyro_session_data %>% 
-  select(c("num_pv", "session_duration", "av_pv_length")) %>%
   rename(PageVisitsInSession = num_pv) %>%
   rename(SessionDuration = session_duration) %>%
-  rename(AveragePageVisitDuration = av_pv_length)
+  rename(AveragePageVisitDuration = av_pv_length) 
 
 # Pairs plot
 pairs(spyro_session_numerical[c("PageVisitsInSession", 
                                 "SessionDuration", 
-                                "AveragePageVisitDuration")], upper.panel = NULL)
+                                "AveragePageVisitDuration")], 
+      upper.panel = NULL, 
+      cex.axis=2,
+      cex.labels = 3)
 
 # Correlation plot
 cor_matrix <- cor(spyro_session_numerical[
@@ -427,10 +459,11 @@ cor_matrix <- cor(spyro_session_numerical[
     "SessionDuration", 
     "AveragePageVisitDuration")])
 cor_matrix
+
 corrplot(cor_matrix, 
          method='number', 
          type='lower',
-         tl.srt = 35)
+         tl.srt = 65)
 
 # Compare numericals with device variables
 numerical_device_data <- left_join(spyro_session_data, profiles, by='pid') 
@@ -470,22 +503,28 @@ plot_ly(data = spyro_session_numerical,
     yaxis = list(title = "PageVisitsInSession")) 
 
 # Split by device
-plot_ly(data = numerical_device_data, 
+fig = plot_ly(data = numerical_device_data, 
         y = ~session_duration, 
         color = ~dev_type, 
         type = "box") %>%
   layout(
-    xaxis = list(title = "DeviceType"),
-    yaxis = list(title = "SessionDuration")) 
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "SessionDuration", titlefont=list(size=30), tickfont=list(size=20)),
+    legend = list(font=list(size=20)))
 
-plot_ly(data = numerical_device_data, 
+orca(fig, file = "images/boxplot_device_session_duration.pdf")
+
+fig = plot_ly(data = numerical_device_data, 
         x = ~session_duration, 
         y = ~num_pv,
         color = ~dev_type, 
         type = "scatter") %>%
   layout(
-    xaxis = list(title = "SessionDuration"),
-    yaxis = list(title = "PageVisitsInSession"))
+    xaxis = list(title = "SessionDuration", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "PageVisitsInSession", titlefont=list(size=30), tickfont=list(size=20)),
+    legend = list(font=list(size=20)))
+
+orca(fig, file = "images/scatter_device_color.png")
 
 # Categorical device correlations/heatmap might be useful here
 device_data = numerical_device_data %>%
@@ -510,11 +549,7 @@ spyro_corr_data <- spyro_inter_visits_v2 %>%
   filter(num_page_visits < 100 & num_page_visits > 1) %>%
   filter(!is.na(inter_session_duration))
   
-spyro_corr_data <- spyro_corr_data %>% 
-  select(c("num_page_visits", 
-           "session_duration",
-           "av_pv_duration",
-           "inter_session_duration")) %>%
+spyro_corr_data <- spyro_corr_data %>%
   rename(PageVisitsInSession = num_page_visits) %>%
   rename(SessionDuration = session_duration) %>%
   rename(AveragePageVisitDuration = av_pv_duration) %>%
@@ -527,7 +562,9 @@ pairs(spyro_corr_data[c("PageVisitsInSession",
                         "SessionDuration", 
                         "AveragePageVisitDuration",
                         "InterSessionDuration")], 
-      upper.panel = NULL)
+      upper.panel = NULL,
+      cex.axis = 2,
+      cex.labels = 3)
 
 # Correlation plot
 cor_matrix <- cor(spyro_corr_data[
@@ -546,7 +583,8 @@ corrplot(cor_matrix,
 
 # Page visit endtime type - Artificial or Real 
 spyro_page_visits_real =  spyro_page_visits %>%
-  filter(pv_endtime_type == 'Real')
+  filter(pv_endtime_type == 'Real') %>% 
+  filter(est_pv_duration > 200)
 nrow(spyro_page_visits_real)
 
 spyro_page_visits_art = spyro_page_visits %>%
@@ -554,21 +592,25 @@ spyro_page_visits_art = spyro_page_visits %>%
 nrow(spyro_page_visits_art)
 
 # PageVisitDuration, split by endtime type
-plot_ly(data = spyro_page_visits_real, 
+fig = plot_ly(data = spyro_page_visits_real, 
         x = ~est_pv_duration, 
         type = "histogram",
         color=I('blue')) %>%
   layout(
-    xaxis = list(title = "RealPageVisitDuration"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
 
-plot_ly(data = spyro_page_visits_art, 
+orca(fig, file = "images/Real_PageVisitDuration_high.pdf")
+
+fig = plot_ly(data = spyro_page_visits_art, 
         x = ~est_pv_duration, 
         type = "histogram",
         color=I('red')) %>%
   layout(
-    xaxis = list(title = "ArtificialPageVisitDuration"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/Artificial_PageVisitDuration.pdf")
 
 
 # Mixture models/Weibull distribution 
@@ -581,37 +623,55 @@ plot_ly(spyro_page_visits_in_session,
 
 descdist(spyro_page_visits_in_session$count, discrete = FALSE)
 
-fw <- fitdist(spyro_page_visits_in_session$count - 1, 
+fw <- fitdist(spyro_page_visits_in_session$count, 
          distr = "weibull", method = 'mle')
 summary(fw)
 
 alpha = 1.02828944
 lambda = 8.58016948
-a <- seq(1, 100, 1)
+a <- seq(2, 30, 0.1)
 
 w_dist <- (alpha/lambda)*((a/lambda)^(alpha - 1))*exp(-((a/lambda)^(alpha)))
 summary(w_dist)
-w_dist = dweibull(a, shape=0.8833657, scale =6.9225031, log = FALSE)
-g_dist = dgamma(a, shape = 1.2539404, rate = 0.1482407)
-e_dist = dexp(a, rate = 0.1182497)
+w_dist = dweibull(a, shape=1.297766, scale =7.168908, log = FALSE)
+g_dist = dgamma(a, shape = 1.814303, rate = 0.276725)
+e_dist = dexp(a, rate = 0.152498)
 p_dist = dpois(a, lambda = 7.456682)
 b_dist = dnbinom(a, size = 1.372226, mu = 8.457522)
 
-plot_ly(spyro_page_visits_in_session) %>% 
+fig = plot_ly(spyro_page_visits_in_session) %>% 
   add_trace(x=~count, 
             type = "histogram", 
             histnorm = "probability",
             color=I('black')) %>%
-  add_trace(x =~(a+1), 
+  add_trace(x =~a, 
             y =~w_dist,
-            color=I('red')) %>%
+            color=I('red'),
+            mode='lines',
+            line = list(width = 4)) %>%
+  add_trace(x =~a, 
+            y =~g_dist,
+            color=I('blue'),
+            mode='lines',
+            line = list(width = 4)) %>%
+  add_trace(x =~a, 
+            y =~e_dist,
+            color=I('green'),
+            mode='lines',
+            line = list(width = 4)) %>%
   layout(
-    xaxis = list(title = "PageVisitsInSession"),
-    yaxis = list(title = "Probability Density"))
+    xaxis = list(title = "PageVisitsInSession", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "Probability Density", titlefont=list(size=30), tickfont=list(size=20)),
+    showlegend = FALSE)
 
-qqplot(g_dist, sort(spyro_page_visits_in_session$count), 
+orca(fig, file = "images/weibull_PageVisitsInSession.pdf")
+mar.default <- c(5,4,4,2) + 0.1
+par(mar = mar.default + c(0, 2, 0, 0))
+qqplot(w_dist, sort(spyro_page_visits_in_session$count), 
        xlab="Weibull distribution",
-       ylab="PageVisitsInSession")
+       ylab="PageVisitsInSession",
+       cex.axis=1.6,
+       cex.lab=1.8)
 
 length(w_dist)
 

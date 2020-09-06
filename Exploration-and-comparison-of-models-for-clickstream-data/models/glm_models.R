@@ -127,25 +127,30 @@ table(logistic_predictions_bool, test_data$Conv)
 
 plot(training_data$num_page_visits,
      resid(step_model),
-     xlab = 'Number of page visits',
+     xlab = 'PageVisitsInSession',
      ylab = 'Residuals',
-     col = factor(training_data$Conv))
-legend(x=80,
+     col = factor(training_data$Conv), 
+     cex.axis = 2.5,
+     cex.lab = 2.5
+     )
+legend(x=75,
        y=1,
        c("Non-conversion","Conversion"),
-       cex=.8,
+       cex=1.8,
        col=c("red","black"),
        pch=c(1,1))
 
 plot(training_data$intent_score,
      resid(step_model),
-     xlab = 'Intent Score',
+     xlab = 'IntentScore',
      ylab = 'Residuals',
-     col = factor(training_data$Conv))
-legend(x=0.7,
-       y=1.05,
+     col = factor(training_data$Conv), 
+     cex.axis = 2.5,
+     cex.lab = 2.5)
+legend(x=0.665,
+       y=-0.65,
        c("Non-conversion","Conversion"),
-       cex=.8,
+       cex=1.8,
        col=c("red","black"),
        pch=c(1,1))
 
@@ -153,11 +158,13 @@ plot(training_data$total_conversions_lag,
      resid(step_model),
      xlab = 'TotalConversions',
      ylab = 'Residuals',
-     col = factor(training_data$Conv))
-legend(x=3.5,
+     col = factor(training_data$Conv), 
+     cex.axis = 2.5,
+     cex.lab = 2.5)
+legend(x=3.,
        y=1,
        c("Non-conversion","Conversion"),
-       cex=.8,
+       cex=1.8,
        col=c("red","black"),
        pch=c(1,1))
 
@@ -165,11 +172,13 @@ plot(training_data$local_total_page_visits,
      resid(step_model),
      xlab = 'TotalPageVisits',
      ylab = 'Residuals',
-     col = factor(training_data$Conv))
-legend(x=120,
+     col = factor(training_data$Conv), 
+     cex.axis = 2.5,
+     cex.lab = 2.5)
+legend(x=100,
        y=1,
        c("Non-conversion","Conversion"),
-       cex=.8,
+       cex=1.8,
        col=c("red","black"),
        pch=c(1,1))
 

@@ -1,5 +1,62 @@
 # Hidden Markov Model run
 
+plot_hmm_logs <- function(hmm){
+
+  plot_ly(x = hmm$hmm$Symbols, 
+          y = hmm$hmm$States,
+          z = log10(hmm$hmm$emissionProbs) %>% rationalize(), 
+          colors = palette(100),
+          colorbar=list(title='Emission \n Probability \n (log)', titlefont=list(size=20), tickfont=list(size=20)),
+          type = "heatmap",
+          zauto = FALSE, 
+          zmin = min(log10(hmm$hmm$emissionProbs) %>% rationalize(), 
+                     zmax = 0, 
+                     na.rm = TRUE)) %>%
+    layout(xaxis = list(title='Observed States', 
+                        titlefont=list(size=30), 
+                        tickfont=list(size=20)),
+           yaxis = list(title='Hidden States', 
+                        titlefont=list(size=30), 
+                        tickfont=list(size=20)))
+}
+
+plot_matrix_logs_v2 <- function(hmm){
+
+  plot_ly(x = hmm$hmm$Symbols, 
+          y = hmm$hmm$States,
+          z = log10(hmm$hmm$transProbs) %>% rationalize(),  
+          colors = palette(100),
+          colorbar=list(title='Transition \n Probability \n (log)', 
+                        titlefont=list(size=20), 
+                        tickfont=list(size=20)),
+          type = "heatmap",
+          zauto = FALSE, 
+          zmin = min(log10(hmm$hmm$transProbs) %>% rationalize(), 
+                      zmax = 0, 
+                      na.rm = TRUE)) %>%
+    layout(xaxis = list(title='Hidden States', 
+                        titlefont=list(size=30), 
+                        tickfont=list(size=20)),
+           yaxis = list(title='Hidden States', 
+                        titlefont=list(size=30), 
+                        tickfont=list(size=20)))
+}
+
+plot_matrix_logs <- function(hmm, matrix, title_header='HMM', legend_text = 'Emission Probability (log)'){
+  legendtitle <- list(yref='paper',xref="paper",y=1.03,x=1.08, text=legend_text, showarrow=F)
+  
+  plot_ly(x = hmm$hmm$Symbols, 
+          y = hmm$hmm$States,
+          z = log10(matrix) %>% rationalize(), 
+          colors = palette(100),
+          type = "heatmap",
+          zauto = FALSE, zmin = min(log10(matrix) %>% rationalize(), zmax = 0, na.rm = TRUE)) %>%
+    layout(xaxis = list(title='Hidden States'),
+           yaxis = list(title='Hidden States'),
+           title = title_header,
+           annotations=legendtitle)
+}
+
 palette <- colorRampPalette(c("white", "yellow", "red", "dark red"))
 
 clickstream_df <- read_csv("data/hidden-markov-data/cleanshark-hmm.csv", col_names = FALSE)
@@ -17,6 +74,12 @@ plot_matrix_logs(gold_hmm_3,
                  gold_hmm_3$hmm$transProbs, 
                  title_header = '3 hidden state HMM - Transition matrix',
                  legend_text = 'Transition probability (log)')
+fig = plot_hmm_logs(full_gold_hmm_5)
+
+orca(fig, file = "images/hmm_full_5_state_trans.pdf")
+
+fig = plot_matrix_logs_v2(full_gold_hmm_5)
+
 
 gold_hmm_4 = train_hmm(
   num_hidden_states=4, 

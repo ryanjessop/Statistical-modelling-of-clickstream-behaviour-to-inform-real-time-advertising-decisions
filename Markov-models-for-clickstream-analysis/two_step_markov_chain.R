@@ -44,12 +44,11 @@ plot_second_order_mc <- function(matrix){
     y = rownames(matrix),
     z = matrix, 
     colors = palette(100),
+    colorbar=list(title='Transition \n Probability', titlefont=list(size=20), tickfont=list(size=20)),
     type = "heatmap",
     zauto = FALSE, zmin = 0, zmax = max(matrix, na.rm = TRUE)) %>%
-    layout(xaxis = list(title="Next state"),
-           yaxis = list(title="Previous/Current State"),
-           title = "Two-step Markov chain transition matrix",
-           annotations=legendtitle)
+    layout(xaxis = list(title="Next state", titlefont=list(size=30), tickfont=list(size=20)),
+           yaxis = list(title="Previous/Current State", titlefont=list(size=30)))
 }
 
 sweep_row_matrix <- function(x){
@@ -84,12 +83,11 @@ plot_second_order_mc_zoom <- function(matrix){
     y = colnames(matrix),
     z = matrix, 
     colors = palette(100),
+    colorbar=list(title='Transition \n Probability', titlefont=list(size=20), tickfont=list(size=20)),
     type = "heatmap",
     zauto = FALSE, zmin = 0, zmax = max(matrix, na.rm = TRUE)) %>%
-    layout(xaxis = list(title="Current State"),
-           yaxis = list(title="Previous State"),
-           title = "Two-step Markov chain transition matrix",
-           annotations=legendtitle)
+    layout(xaxis = list(title="Current State", titlefont=list(size=30), tickfont=list(size=20)),
+           yaxis = list(title="Previous State", titlefont=list(size=30), tickfont=list(size=20)))
 }
 
 second_order_mc_joint <- function(data){
@@ -127,7 +125,7 @@ second_order_mc_joint <- function(data){
 # Two-step Markov chain run
 clickstreams_trbl = read_csv("second-order-data/cleanshark-no-gap-mc.csv")
 second_mc <- second_order_mc(clickstreams_trbl)
-plot_second_order_mc(second_mc)
+fig = plot_second_order_mc(second_mc)
 
 smooth_second_mc <- smooth_transition_matrix(second_mc)
 plot_second_order_mc(smooth_second_mc)
@@ -138,11 +136,13 @@ plot_second_order_mc(second_mc_joint)
 
 # Focus in on prediction column
 second_mc_x = zoom_second_order_matrix(second_mc_joint, 'X')
-plot_second_order_mc_zoom(second_mc_x)
+fig = plot_second_order_mc_zoom(second_mc_x)
 
 second_mc_y = zoom_second_order_matrix(second_mc_joint, 'Y')
-plot_second_order_mc_zoom(second_mc_y)
+fig = plot_second_order_mc_zoom(second_mc_y)
 
 # Shall we add an X state before every Y state?
+
+orca(fig, file = "images/two_step_matrix_to_Y.pdf")
 
 

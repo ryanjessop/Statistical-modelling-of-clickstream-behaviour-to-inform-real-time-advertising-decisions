@@ -32,7 +32,7 @@ library(anytime)
 #----------------------------------------------------------------------
 # Read in data set
 
-rfmp <- read_csv("data/rfmp_hit2/rfmp-hit2.csv")
+rfmp <- read_csv("rfmp-hit2.csv")
 head(rfmp)
 names(rfmp)
 str(rfmp)
@@ -88,115 +88,139 @@ table(rfmp_sample$range_hits)
 plot_ly(rfmp_sample, x = ~category1, type = "histogram")
 
 # Frequency 
-plot_ly(rfmp_sample, 
+fig = plot_ly(rfmp_sample, 
         x = ~day_count, 
         type = "histogram") %>% 
   layout(
-    xaxis = list(title = "DayCount"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
 
-plot_ly(rfmp_sample, 
+orca(fig, file = "images/DayCount_hist.pdf")
+
+fig = plot_ly(rfmp_sample, 
         x = ~weekday_count, 
         type = "histogram",
         color = "red") %>% 
   layout(
-    xaxis = list(title = "WeekdayCount"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
 
-plot_ly(rfmp_sample, 
+orca(fig, file = "images/WeekdayCount_hist.pdf")
+
+fig = plot_ly(rfmp_sample, 
         x = ~weekend_count, 
         type = "histogram",
         color = I("dark green")) %>% 
   layout(
-    xaxis = list(title = "WeekendCount"),
-    yaxis = list(title = "Count")) 
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/WeekendCount_hist.pdf")
 
 # Variability
-plot_ly(rfmp_sample, 
+fig = plot_ly(rfmp_sample, 
         x = ~round(avg_inter_visit), 
         type = "histogram",
         color = I("pink")) %>% 
   layout(
-    xaxis = list(title = "AverageInterVisit"),
-    yaxis = list(title = "Count")) 
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
 
-plot_ly(rfmp_sample, 
+orca(fig, file = "images/AverageInterVisit_hist.pdf")
+
+fig = plot_ly(rfmp_sample, 
         x = ~max_inter_visit, 
         type = "histogram",
         color = I("black")) %>% 
   layout(
-    xaxis = list(title = "MaximumInterVisit"),
-    yaxis = list(title = "Count")) 
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/MaximumInterVisit_hist.pdf")
 
 plot_ly(rfmp_sample, x = ~min_inter_visit, type = "histogram")
 
-plot_ly(rfmp_sample, 
+fig = plot_ly(rfmp_sample, 
         x = ~inter_visit_range, 
         type = "histogram",
         color = I("grey")) %>% 
   layout(
-    xaxis = list(title = "RangeInterVisit"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/RangeInterVisit_hist.pdf")
 
 plot_ly(rfmp_sample, x = ~inter_visit_median, type = "histogram")
 
 # Recency
-plot_ly(rfmp_sample, 
+fig = plot_ly(rfmp_sample, 
         x = ~anydate(avg_date), 
         type = "histogram",
         color = I("purple")) %>% 
   layout(
-    xaxis = list(title = "AverageDate"),
-    yaxis = list(title = "Count")) 
+    xaxis = list(title = "", tickfont=list(size=20), tickangle = 90),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/AverageDate_hist.pdf")
 
 plot_ly(rfmp_sample, x = ~date_range, type = "histogram")
 plot_ly(rfmp_sample, x = ~median_date, type = "histogram")
 plot_ly(rfmp_sample, x = ~max_hit_date, type = "histogram")
 
-plot_ly(rfmp_sample, 
+fig = plot_ly(rfmp_sample, 
         x = ~recent_date, 
         type = "histogram",
         color = I("light blue")) %>% 
   layout(
-    xaxis = list(title = "RecentDate"),
-    yaxis = list(title = "Count")) 
+    xaxis = list(title = "", tickfont=list(size=20), tickangle = 90),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
 
-plot_ly(rfmp_sample, 
+orca(fig, file = "images/RecentDate_hist.pdf")
+
+fig = plot_ly(rfmp_sample, 
         x = ~min_date, 
         type = "histogram",
         color = I("dark red")) %>% 
   layout(
-    xaxis = list(title = "OldestDate"),
-    yaxis = list(title = "Count")) 
+    xaxis = list(title = "", tickfont=list(size=20), tickangle = 90),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/OldestDate_hist.pdf")
 
 # Intensity
-plot_ly(rfmp_sample, 
+fig = plot_ly(rfmp_sample, 
         x = ~round(avg_hits), 
         type = "histogram",
         color = I("red")) %>% 
   layout(
-    xaxis = list(title = "AverageHits"),
-    yaxis = list(title = "Count")) 
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/AverageHits_hist.pdf") 
 
 plot_ly(rfmp_sample, x = ~median_hits, type = "histogram")
 
-plot_ly(rfmp_sample, 
+fig = plot_ly(rfmp_sample, 
         x = ~max_hits, 
         type = "histogram",
         color = I("light green")) %>% 
   layout(
-    xaxis = list(title = "MaximumHits"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/MaximumHits_hist.pdf") 
 
 plot_ly(rfmp_sample, x = ~min_hits, type = "histogram")
 
-plot_ly(rfmp_sample, 
+fig = plot_ly(rfmp_sample, 
         x = ~range_hits, 
         type = "histogram",
         color = I("orange")) %>% 
   layout(
-    xaxis = list(title = "RangeHits"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/RangeHits_hist.pdf") 
 
 # Quantiles 
 quantile(rfmp_sample$day_count, probs = c(seq(0, 1, 0.25)))
@@ -306,7 +330,10 @@ frequency_vars_rfmp_sample <- rfmp_sample %>%
   rename(WeekdayCount = weekday_count) %>%
   rename(WeekendCount = weekend_count)
 
-pairs(frequency_vars_rfmp_sample)
+pairs(frequency_vars_rfmp_sample,
+      upper.panel = NULL, 
+      cex.axis=2,
+      cex.labels = 3)
 
 res <- cor(frequency_vars_rfmp_sample)
 round(res, 2)
@@ -330,7 +357,10 @@ intensity_vars_rfmp_sample <- rfmp_sample %>%
   rename(MinimumHits = min_hits) %>%
   rename(RangeHits = range_hits)
 
-pairs(intensity_vars_rfmp_sample)
+pairs(intensity_vars_rfmp_sample,
+      upper.panel = NULL, 
+      cex.axis=2,
+      cex.labels = 3)
 
 res <- cor(intensity_vars_rfmp_sample)
 round(res, 2)
@@ -344,11 +374,11 @@ corrplot(res, method="color",
 # Recency
 
 # Convert dates to seconds
-rfmp_sample$recent_date <- as.numeric(rfmp_sample$recent_date)
-rfmp_sample$min_date <- as.numeric(rfmp_sample$min_date)
-rfmp_sample$avg_date <- as.numeric(rfmp_sample$avg_date)
-rfmp_sample$median_date <- as.numeric(rfmp_sample$median_date)
-rfmp_sample$max_hit_date <- as.numeric(rfmp_sample$max_hit_date)
+rfmp_sample$recent_date <- (as.numeric(rfmp_sample$recent_date) - 1515196800 ) / 86400
+rfmp_sample$min_date <- (as.numeric(rfmp_sample$min_date) - 1515196800 ) / 86400
+rfmp_sample$avg_date <- (as.numeric(rfmp_sample$avg_date) - 1515196800 ) / 86400
+rfmp_sample$median_date <- (as.numeric(rfmp_sample$median_date) - 1515196800 ) / 86400
+rfmp_sample$max_hit_date <- (as.numeric(rfmp_sample$max_hit_date) - 1515196800 ) / 86400
 
 recency_vars_rfmp_sample <- rfmp_sample %>% 
   select(c('avg_date',
@@ -362,7 +392,10 @@ recency_vars_rfmp_sample <- rfmp_sample %>%
   rename(OldestDate = min_date) %>%
   rename(RecentDate = recent_date)
 
-pairs(recency_vars_rfmp_sample)
+pairs(recency_vars_rfmp_sample,
+      upper.panel = NULL, 
+      cex.axis=2,
+      cex.labels = 2.75)
 
 res <- cor(recency_vars_rfmp_sample)
 round(res, 2)
@@ -388,7 +421,10 @@ variability_vars_rfmp_sample <- rfmp_sample %>%
   rename(MinimumInterVisit = min_inter_visit) %>% 
   rename(RangeInterVisit = inter_visit_range)
 
-pairs(variability_vars_rfmp_sample)
+pairs(variability_vars_rfmp_sample,
+      upper.panel = NULL, 
+      cex.axis=1.8,
+      cex.labels = 2.2)
 
 res <- cor(variability_vars_rfmp_sample)
 round(res, 2)

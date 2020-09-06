@@ -13,7 +13,6 @@ library(vcd)
 library(car)
 library(caret)
 library(caTools)
-library(car)
 library(qualityTools)
 library(stats)
 library(readr)
@@ -36,7 +35,7 @@ sample_active_adwords$click_bool[zero_index] <- FALSE
 sample_active_adwords$click_bool[non_zero_index] <- TRUE
 
 # Data sampling 
-set.seed(101); sample = sample.split(sample_active_adwords$PartitionKey, SplitRatio = .75)
+set.seed(101); sample = sample.split(sample_active_adwords$PartitionKey, SplitRatio = .60)
 train = subset(sample_active_adwords, sample == TRUE)
 test  = subset(sample_active_adwords, sample == FALSE)
 

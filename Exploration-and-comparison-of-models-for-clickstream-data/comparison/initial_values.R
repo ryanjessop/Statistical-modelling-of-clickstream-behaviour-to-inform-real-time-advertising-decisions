@@ -108,6 +108,51 @@ initial_val_hmm <- train_hmm(
   replace_threshold = 0.4,
   replace_value = 0)
 
+
+plot_matrix_logs_v2_init <- function(hmm){
+  
+  plot_ly(x = hmm$hmm$hmm$Symbols, 
+          y = hmm$hmm$hmm$States,
+          z = log10(hmm$init_trans) %>% rationalize(),  
+          colors = palette(100),
+          colorbar=list(title='Transition \n Probability \n (log)', 
+                        titlefont=list(size=20), 
+                        tickfont=list(size=20)),
+          type = "heatmap",
+          zauto = FALSE, 
+          zmin = min(log10(hmm$init_trans) %>% rationalize(), 
+                     zmax = 0, 
+                     na.rm = TRUE)) %>%
+    layout(xaxis = list(title='Hidden States', 
+                        titlefont=list(size=30), 
+                        tickfont=list(size=20)),
+           yaxis = list(title='Hidden States', 
+                        titlefont=list(size=30), 
+                        tickfont=list(size=20)))
+}
+
+plot_hmm_logs_init <- function(hmm){
+
+  plot_ly(x = hmm$hmm$hmm$Symbols, 
+          y = hmm$hmm$hmm$States,
+          z = log10(hmm$init_emis) %>% rationalize(), 
+          colors = palette(100),
+          colorbar=list(title='Emission \n Probability \n (log)', 
+                        titlefont=list(size=20), 
+                        tickfont=list(size=20)),
+          type = "heatmap",
+          zauto = FALSE, 
+          zmin = min(log10(hmm$init_emis) %>% rationalize(), 
+                                    zmax = 0, 
+                                    na.rm = TRUE)) %>%
+    layout(xaxis = list(title='Observed States', 
+                        titlefont=list(size=30), 
+                        tickfont=list(size=20)),
+           yaxis = list(title='Hidden States', 
+                        titlefont=list(size=30), 
+                        tickfont=list(size=20)))
+}
+
 plot_matrix_logs(initial_val_hmm$hmm, 
                  initial_val_hmm$init_trans, 
                  title_header = '5 hidden state HMM - Initial transition matrix',
@@ -123,6 +168,14 @@ plot_matrix_logs(initial_val_hmm$hmm,
 plot_hmm_logs(initial_val_hmm$hmm, 
               title_header = '5 hidden state HMM - Emission matrix')
 
+
+fig = plot_matrix_logs_v2(initial_val_hmm$hmm)
+fig = plot_hmm_logs(initial_val_hmm$hmm)
+
+fig = plot_matrix_logs_v2_init(initial_val_hmm)
+fig = plot_hmm_logs_init(initial_val_hmm)
+
+orca(fig, file = "images/init_emission_matrix_zeros.pdf")
 
 # Fails to train...
 initial_val_hmm_ones <- train_hmm(

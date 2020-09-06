@@ -14,21 +14,21 @@ library(reshape2)
 library(gridExtra) 
 options(scipen = 999) 
 library(caret)
-library(corrplot) 
+library(corrplot)
 library(RColorBrewer)
 library(funModeling) 
 library(vcd)
-library(corrplot)
 library(lubridate)
 library(tidyverse)
 library(arm)
+library(webshot)
 
 #-----------------------------------------------------------
 # Read in data
 
 # Data from keyword reports 
 # Date range: 01/08/2017-01/10/2017
-adword_data <- read_csv("C:/Users/ryana/Desktop/Ch_2/data/adword_data.csv")
+adword_data <- read_csv("~/data/masters/Ch-2/adword_data.csv")
 View(adword_data)
 nrow(adword_data)
 
@@ -213,26 +213,30 @@ nrow(sample_active_adwords)
 View(sample_active_adwords)
 
 # Time
-plot_ly(data = sample_active_adwords,
+fig = plot_ly(data = sample_active_adwords,
         x=~as_date(PartitionKey),
         type="histogram",
         color = I('black')) %>%
         layout(
-          xaxis = list(title = "Time"),
-          yaxis = list(title = "Count"))
+          xaxis = list(title = "", tickfont=list(size=20)),
+          yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/date_dist.pdf")
 
 quantile(sample_active_adwords$PartitionKey, probs = c(seq(0, 1, 0.25)))
          
 # Keyword match type distribution
 table(sample_active_adwords$KeywordMatchType)
-plot_ly(data = sample_active_adwords,
+fig = plot_ly(data = sample_active_adwords,
         x=~KeywordMatchType, 
         type="histogram") %>%
   layout(
-    xaxis = list(title = "KeywordMatchType"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
 
-plot_ly(data=impr_data,
+orca(fig, file = "images/kmt_dist.pdf")
+
+fig = plot_ly(data=impr_data,
         x=~ImpressionDelta,
         y=~ClicksDelta, 
         symbol = ~KeywordMatchType, 
@@ -241,28 +245,40 @@ plot_ly(data=impr_data,
         type="scatter", 
         mode="markers") %>%
   layout(
-    xaxis = list(title = "ImpressionsDelta"),
-    yaxis = list(title = "ClicksDelta"))
+    xaxis = list(title = "ImpressionsDelta", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "ClicksDelta", titlefont=list(size=30), tickfont=list(size=20)),
+    legend = list(font=list(size=20)))
+
+orca(fig, file = "images/kmt_scatter.pdf")
 
 # Average position distribution
 table(active_adwords$AveragePosition)
-plot_ly(data = sample_active_adwords,
+fig = plot_ly(data = sample_active_adwords,
         x=~AveragePosition, 
         type="histogram", 
         color = I('orange')) %>%
   layout(
-    xaxis = list(title = "AveragePosition"),
-    yaxis = list(title = "Count"))
-plot_ly(data=impr_data,
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/avg_pos_dist.pdf")
+
+fig = plot_ly(data=impr_data,
         x=~ImpressionDelta,
         y=~ClicksDelta, 
-        color=~AveragePosition, 
         type="scatter", 
         mode="markers", 
-        colors = colorRamp(c("light green", "dark blue"))) %>%
+        marker = list(
+          color=~AveragePosition, 
+          colorscale = 'Hot',
+          colorbar=list(tickfont=list(size=20))
+          )
+        ) %>%
   layout(
-    xaxis = list(title = "ImpressionsDelta"),
-    yaxis = list(title = "ClicksDelta"))
+    xaxis = list(title = "ImpressionsDelta", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "ClicksDelta", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/position_scatter.pdf")
 
 quantile(impr_data$AveragePosition, probs = c(seq(0, 1, 0.25)))
 
@@ -274,14 +290,16 @@ quantile(impr_data$AveragePosition, probs = c(seq(0, 1, 0.25)))
 # Histogram of impressions distribution
 table(active_adwords$ImpressionDelta)
 impr_data = sample_active_adwords[which(sample_active_adwords$ImpressionDelta > 0),]
-plot_ly(data = sample_active_adwords,
+fig = plot_ly(data = sample_active_adwords,
         x=~ImpressionDelta,
         type="histogram",
         color=I('purple')) %>%
   layout(
-    xaxis = list(title = "ImpressionsDelta"),
-    yaxis = list(title = "Count",
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20),
                  type = "log"))
+
+orca(fig, file = "images/impressions_dist.pdf")
 
 quantile(sample_active_adwords$ImpressionDelta, probs = c(seq(0, 1, 0.25)))
 
@@ -290,57 +308,70 @@ quantile(sample_active_adwords$ImpressionDelta, probs = c(seq(0, 1, 0.25)))
 click_data <- sample_active_adwords[which(sample_active_adwords$ClicksDelta > 0),]
 table(active_adwords$ClicksDelta)
 table(impr_data$ClicksDelta)
-plot_ly(data=impr_data,
+fig = plot_ly(data=impr_data,
         x=~ClicksDelta,
         type="histogram",
         color=I('red')) %>%
   layout(
-    xaxis = list(title = "ClicksDelta"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/clicks_dist.pdf")
 
 quantile(impr_data$ClicksDelta, probs = c(seq(0, 1, 0.25)))
 
 # Histogram of distribution of conversions 
 table(active_adwords$ConversionDelta)  
 table(impr_data$ConversionDelta)
-plot_ly(data=impr_data,
-        x=~ConversionDelta,
+fig = plot_ly(data=impr_data,
+        x=~as.factor(ConversionDelta),
         type="histogram",
         color=I('pink')) %>%
   layout(
-    xaxis = list(title = "ConversionsDelta"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/conversions_dist.pdf")
 
 quantile(impr_data$ConversionDelta, probs = c(seq(0, 1, 0.25)))
 
 # Creative quality score distribution 
 table(active_adwords$CreativeQualityScore)
-plot_ly(data = sample_active_adwords[which(sample_active_adwords$CreativeQualityScore != 'Not applicable'),],
+fig = plot_ly(data = sample_active_adwords[which(sample_active_adwords$CreativeQualityScore != 'Not applicable'),],
         x=~CreativeQualityScore, 
         type="histogram",
         color=I('dark red')) %>%
   layout(
-    xaxis = list(title = "CreativeQuality"),
-    yaxis = list(title = "Count"))
-plot_ly(data=impr_data,
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/cqs_dist.pdf")
+
+fig = plot_ly(data=impr_data,
         x=~ImpressionDelta,
         y=~ClicksDelta, 
         color=~CreativeQualityScore, 
         type="scatter", 
         mode="markers") %>%
   layout(
-    xaxis = list(title = "ImpressionsDelta"),
-    yaxis = list(title = "ClicksDelta"))
+    xaxis = list(title = "ImpressionsDelta", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "ClicksDelta", titlefont=list(size=30), tickfont=list(size=20)),
+    legend = list(font=list(size=20)))
+
+orca(fig, file = "images/creative_scatter.pdf")
 
 # Quality score distibution before discretization
 table(active_adwords$QualityScore)
-plot_ly(data = sample_active_adwords,
+fig = plot_ly(data = sample_active_adwords,
         x=~QualityScore, 
         type="histogram",
         color=I('dark green')) %>%
   layout(
-    xaxis = list(title = "KeywordQuality"),
-    yaxis = list(title = "Count"))
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20)))
+
+orca(fig, file = "images/kqs_dist.pdf")
+
 plot_ly(data=impr_data,
         x=~ImpressionDelta,
         y=~ClicksDelta, 
@@ -350,6 +381,7 @@ plot_ly(data=impr_data,
   layout(
     xaxis = list(title = "ImpressionsDelta"),
     yaxis = list(title = "ClicksDelta"))
+
 # Quality score after discretization
 table(active_adwords$quality)
 plot_ly(data = sample_active_adwords,
@@ -370,14 +402,29 @@ plot_ly(data=impr_data,
 
 # MaxCpc distribution
 table(active_adwords$MaxCpc)
-plot_ly(data = sample_active_adwords,
+fig = plot_ly(data = sample_active_adwords,
         x=~MaxCpc, 
         type="histogram",
         color=I('dark grey')) %>%
   layout(
-    xaxis = list(title = "MaxCpc"),
-    yaxis = list(title = "Count", 
+    xaxis = list(title = "", tickfont=list(size=20)),
+    yaxis = list(title = "Count", titlefont=list(size=30), tickfont=list(size=20),
                  type = 'log'))
+
+orca(fig, file = "images/maxcpc_dist.pdf")
+
+table(sample_active_adwords$KeywordMatchType)
+table(sample_active_adwords$KeywordMatchType, sample_active_adwords$ImpressionDelta)
+
+# 4% of broad match have at least one impression
+# 6% of exact match have at least one impression
+
+sum(sample_active_adwords$ImpressionDelta[sample_active_adwords$KeywordMatchType == 'Broad'])
+sum(sample_active_adwords$ImpressionDelta[sample_active_adwords$KeywordMatchType == 'Exact'])
+
+# 81% of impressions are from broad match
+# 19% of impressions are from exact match
+
 plot_ly(data=impr_data,
         x=~ImpressionDelta,
         y=~ClicksDelta, 
@@ -397,6 +444,7 @@ plot_ly(data = sample_active_adwords,
   layout(
     xaxis = list(title = "Day of week"),
     yaxis = list(title = "Count"))
+
 plot_ly(data=impr_data,
         x=~ImpressionDelta,
         y=~ClicksDelta, 
@@ -417,6 +465,10 @@ plot_ly(data = sample_active_adwords,
     yaxis = list(title = "Count"))
 quantile(sample_active_adwords$PartitionKey$hour, probs = c(seq(0, 1, 0.25)))
 
+sum(sample_active_adwords$ImpressionDelta[sample_active_adwords$hod == '12pm-6pm'])
+sum(sample_active_adwords$ImpressionDelta[sample_active_adwords$hod == '12am-6am'])
+sum(sample_active_adwords$ImpressionDelta[sample_active_adwords$hod == '6am-12pm'])
+sum(sample_active_adwords$ImpressionDelta[sample_active_adwords$hod == '6pm-12am'])
 
 impr_data$hod <- NA
 morning_index = which(impr_data$PartitionKey$hour >= 6 & impr_data$PartitionKey$hour< 12)
@@ -428,15 +480,25 @@ impr_data$hod[midday_index] <- "12pm-6pm"
 impr_data$hod[evening_index] <- "6pm-12am"
 impr_data$hod[night_index] <- "12am-6am"
 
-plot_ly(data=impr_data[which(!is.na(impr_data$hod)),],
+plot_ly(data = impr_data,
+        x=~hod, 
+        type="histogram") %>%
+  layout(
+    xaxis = list(title = "Hour of day"),
+    yaxis = list(title = "Count"))
+
+fig = plot_ly(data=impr_data[which(!is.na(impr_data$hod)),],
         x=~ImpressionDelta,
         y=~ClicksDelta, 
         color=~hod, 
         type="scatter", 
         mode="markers") %>%
   layout(
-    xaxis = list(title = "ImpressionsDelta"),
-    yaxis = list(title = "ClicksDelta"))
+    xaxis = list(title = "ImpressionsDelta", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "ClicksDelta", titlefont=list(size=30), tickfont=list(size=20)),
+    legend = list(font=list(size=20)))
+
+orca(fig, file = "images/hod_scatter.pdf")
 
 # Impressions label: binary variable
 table(active_adwords$impression)
@@ -520,22 +582,26 @@ plot_ly(data = no_show,
 
 # Create contingency tables & Association plots
 # CQS vs QS
-tblA = table(impr_data$CreativeQualityScore, 
-             impr_data$QualityScore)
-tbla = tblA[1:3,]
+tblA = table(impr_data$QualityScore, impr_data$CreativeQualityScore)
+tbla = tblA[,1:3]
 chisq.test(tblA)
 assoc(tblA, shade=TRUE)
 col_names <- c('Below average','Average','Above average')
 M <- matrix(tbla, nrow(tbla), ncol(tbla))
 M[,col_names]
-plot_ly(x=colnames(tbla),
+fig = plot_ly(x=colnames(tbla),
         y=rownames(tbla),
         z=matrix(tbla, nrow(tbla), ncol(tbla)), 
         type='heatmap',
-        colors = colorRamp(c("white", "blue"))) %>%
+        colors = colorRamp(c("white", "blue")),
+        colorbar=list(tickfont=list(size=20))) %>%
+  hide_colorbar() %>%
   layout(
-    xaxis = list(title = "KeywordQuality"),
-    yaxis = list(title = "CreativeQuality"))
+    xaxis = list(title = "CreativeQuality", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "KeywordQuality", titlefont=list(size=30), tickfont=list(size=20))
+  )
+
+orca(fig, file = "images/quality_heatmap_legend.pdf")
 
 # EPA vs QS
 tblB = table(impr_data$eap, 
@@ -545,19 +611,22 @@ chisq.test(tblB)
 assoc(tblB, shade=TRUE)
 
 # KMT vs KQS 
-tblC = table(impr_data$KeywordMatchType, 
-             impr_data$QualityScore)
+tblC = table(impr_data$QualityScore, impr_data$KeywordMatchType)
 tblC
 chisq.test(tblC)
 assoc(tblC, shade=TRUE)
-plot_ly(x=colnames(tblC),
+fig = plot_ly(x=colnames(tblC),
         y=rownames(tblC),
         z=matrix(tblC, nrow(tblC), ncol(tblC)), 
         type='heatmap',
-        colors = colorRamp(c("white", "blue")))  %>%
+        colors = colorRamp(c("white", "blue")),
+        colorbar=list(title='Count', titlefont=list(size=20), tickfont=list(size=20)))  %>%
   layout(
-    xaxis = list(title = "KeywordQuality"),
-    yaxis = list(title = "KeywordMatchType"))
+    xaxis = list(title = "KeywordMatchType", titlefont=list(size=30), tickfont=list(size=20)),
+    yaxis = list(title = "KeywordQuality", titlefont=list(size=30), tickfont=list(size=20))
+  )
+
+orca(fig, file = "images/keyword_heatmap_legend.pdf")
 
 # CQS vs EPA
 tblD = table(impr_data$CreativeQualityScore, 
@@ -604,7 +673,10 @@ numerical <- c('ImpressionsDelta', 'ClicksDelta',
                'MaxCpc')
 
 # Pairs plot
-pairs(impr_data[numerical], upper.panel = NULL)
+pairs(impr_data[numerical],
+      upper.panel = NULL, 
+      cex.axis=2,
+      cex.labels = 2.75)
 
 # Correlation plot
 cor_matrix <- cor(impr_data[numerical])
